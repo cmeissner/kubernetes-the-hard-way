@@ -33,30 +33,30 @@ kubectl get nodes \
 Output:
 
 ```
-10.240.0.20 10.200.0.0/24 
-10.240.0.21 10.200.1.0/24 
-10.240.0.22 10.200.2.0/24 
+10.1.232.8 10.200.1.0/24 
+10.1.232.9 10.200.2.0/24 
+10.1.232.10 10.200.0.0/24
 ```
 
 ## Create Routes
 
 ```
-gcloud compute routes create kubernetes-route-10-200-0-0-24 \
-  --network kubernetes-the-hard-way \
-  --next-hop-address 10.240.0.20 \
-  --destination-range 10.200.0.0/24
+ip r a 10.200.1.0/24 via $(facter -p ipaddress)
 ```
 
 ```
-gcloud compute routes create kubernetes-route-10-200-1-0-24 \
-  --network kubernetes-the-hard-way \
-  --next-hop-address 10.240.0.21 \
-  --destination-range 10.200.1.0/24
+ip r a 10.200.2.0/24 via $(facter -p ipaddress)
 ```
 
 ```
-gcloud compute routes create kubernetes-route-10-200-2-0-24 \
-  --network kubernetes-the-hard-way \
-  --next-hop-address 10.240.0.22 \
-  --destination-range 10.200.2.0/24
+ip r a 10.200.0.0/24 via $(facter -p ipaddress)
+```
+
+To made these settings persistent you have to modify /etc/network/interfaces.d/eth0.conf to looks like this:
+
+```
+auto eth0
+iface eth0 inet dhcp
+  up   ip route add 10.200.1.0/24 via 10.1.232.8
+  down ip route del 10.200.1.0/24 via 10.1.232.8
 ```

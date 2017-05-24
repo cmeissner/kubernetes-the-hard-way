@@ -57,7 +57,7 @@ sudo mv cfssljson_linux-amd64 /usr/local/bin/cfssljson
 Create a CA configuration file:
 
 ```
-cat > ca-config.json <<EOF
+cat > json/ca-config.json <<EOF
 {
   "signing": {
     "default": {
@@ -78,7 +78,7 @@ Create a CA certificate signing request:
 
 
 ```
-cat > ca-csr.json <<EOF
+cat > json/ca-csr.json <<EOF
 {
   "CN": "Kubernetes",
   "key": {
@@ -87,11 +87,11 @@ cat > ca-csr.json <<EOF
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
+      "C": "DE",
+      "L": "Berlin",
       "O": "Kubernetes",
       "OU": "CA",
-      "ST": "Oregon"
+      "ST": "Berlin"
     }
   ]
 }
@@ -101,7 +101,7 @@ EOF
 Generate a CA certificate and private key:
 
 ```
-cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+cfssl gencert -initca json/ca-csr.json | cfssljson -bare ca
 ```
 
 Results:
@@ -120,7 +120,7 @@ In this section we will generate TLS certificates for each Kubernetes component 
 Create the admin client certificate signing request:
 
 ```
-cat > admin-csr.json <<EOF
+cat > json/admin-csr.json <<EOF
 {
   "CN": "admin",
   "hosts": [],
@@ -130,11 +130,11 @@ cat > admin-csr.json <<EOF
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
+      "C": "DE",
+      "L": "Berlin",
       "O": "system:masters",
       "OU": "Cluster",
-      "ST": "Oregon"
+      "ST": "Berlin"
     }
   ]
 }
@@ -147,9 +147,9 @@ Generate the admin client certificate and private key:
 cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
-  -config=ca-config.json \
+  -config=json/ca-config.json \
   -profile=kubernetes \
-  admin-csr.json | cfssljson -bare admin
+  json/admin-csr.json | cfssljson -bare admin
 ```
 
 Results:
@@ -164,7 +164,7 @@ admin.pem
 Create the kube-proxy client certificate signing request:
 
 ```
-cat > kube-proxy-csr.json <<EOF
+cat > json/kube-proxy-csr.json <<EOF
 {
   "CN": "system:kube-proxy",
   "hosts": [],
@@ -174,11 +174,11 @@ cat > kube-proxy-csr.json <<EOF
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
+      "C": "DE",
+      "L": "Berlin",
       "O": "system:node-proxier",
       "OU": "Cluster",
-      "ST": "Oregon"
+      "ST": "Berlin"
     }
   ]
 }
@@ -191,9 +191,9 @@ Generate the kube-proxy client certificate and private key:
 cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
-  -config=ca-config.json \
+  -config=json/ca-config.json \
   -profile=kubernetes \
-  kube-proxy-csr.json | cfssljson -bare kube-proxy
+  json/kube-proxy-csr.json | cfssljson -bare kube-proxy
 ```
 
 Results:
@@ -216,15 +216,13 @@ KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-har
 Create the Kubernetes server certificate signing request:
 
 ```
-cat > kubernetes-csr.json <<EOF
+cat > json/kubernetes-csr.json <<EOF
 {
   "CN": "kubernetes",
   "hosts": [
-    "10.32.0.1",
-    "10.240.0.10",
-    "10.240.0.11",
-    "10.240.0.12",
-    "${KUBERNETES_PUBLIC_ADDRESS}",
+    "10.1.232.5",
+    "10.1.232.6",
+    "10.1.232.7",
     "127.0.0.1",
     "kubernetes.default"
   ],
@@ -234,11 +232,11 @@ cat > kubernetes-csr.json <<EOF
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
+      "C": "DE",
+      "L": "Berlin",
       "O": "Kubernetes",
       "OU": "Cluster",
-      "ST": "Oregon"
+      "ST": "Berlin"
     }
   ]
 }
@@ -251,9 +249,9 @@ Generate the Kubernetes certificate and private key:
 cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
-  -config=ca-config.json \
+  -config=json/ca-config.json \
   -profile=kubernetes \
-  kubernetes-csr.json | cfssljson -bare kubernetes
+  json/kubernetes-csr.json | cfssljson -bare kubernetes
 ```
 
 Results:
@@ -270,13 +268,15 @@ Set the list of Kubernetes hosts where the certs should be copied to:
 The following commands will copy the TLS certificates and keys to each Kubernetes host using the `gcloud compute copy-files` command.
 
 ```
-for host in worker0 worker1 worker2; do
-  gcloud compute copy-files ca.pem kube-proxy.pem kube-proxy-key.pem ${host}:~/
+for host in oobtest-kubenode-{1..3}-test-01.test.bnotk.net  
+do
+  scp ca.pem kube-proxy{,-key}.pem root@${host}:~/
 done
 ```
 
 ```
-for host in controller0 controller1 controller2; do
-  gcloud compute copy-files ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem ${host}:~/
+for host in oobtest-kubemaster-{1..3}-test-01.test.bnotk.net  
+do 
+  scp {ca,kubernetes}{,-key}.pem root@${host}:
 done
 ```

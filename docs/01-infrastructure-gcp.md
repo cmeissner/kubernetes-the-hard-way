@@ -5,17 +5,20 @@ This lab will walk you through provisioning the compute instances required for r
 After completing this guide you should have the following compute instances:
 
 ```
-gcloud compute instances list
+hammer> host list --search kube
 ```
 
 ````
-NAME         ZONE           MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP      STATUS
-controller0  us-central1-f  n1-standard-1               10.240.0.10  XXX.XXX.XXX.XXX  RUNNING
-controller1  us-central1-f  n1-standard-1               10.240.0.11  XXX.XXX.XXX.XXX  RUNNING
-controller2  us-central1-f  n1-standard-1               10.240.0.12  XXX.XXX.XXX.XXX  RUNNING
-worker0      us-central1-f  n1-standard-1               10.240.0.20  XXX.XXX.XXX.XXX  RUNNING
-worker1      us-central1-f  n1-standard-1               10.240.0.21  XXX.XXX.XXX.XXX  RUNNING
-worker2      us-central1-f  n1-standard-1               10.240.0.22  XXX.XXX.XXX.XXX  RUNNING
+----|---------------------------------------------|------------------|---------------|--------------
+ID  | NAME                                        | BETRIEBSSYSTEM   | HOSTGRUPPE    | IP           
+----|---------------------------------------------|------------------|---------------|--------------
+112 | oobtest-kubemaster-1-test-01.test.bnotk.net | Ubuntu 16.04 LTS | test/oob-test | 10.1.232.5   
+113 | oobtest-kubemaster-2-test-01.test.bnotk.net | Ubuntu 16.04 LTS | test/oob-test | 10.1.232.6   
+114 | oobtest-kubemaster-3-test-01.test.bnotk.net | Ubuntu 16.04 LTS | test/oob-test | 10.1.232.7   
+116 | oobtest-kubenode-1-test-01.test.bnotk.net   | Ubuntu 16.04 LTS | test/oob-test | 10.1.232.8   
+118 | oobtest-kubenode-2-test-01.test.bnotk.net   | Ubuntu 16.04 LTS | test/oob-test | 10.1.232.9   
+117 | oobtest-kubenode-3-test-01.test.bnotk.net   | Ubuntu 16.04 LTS | test/oob-test | 10.1.232.10  
+----|---------------------------------------------|------------------|---------------|--------------
 ````
 
 > All machines will be provisioned with fixed private IP addresses to simplify the bootstrap process.

@@ -123,29 +123,36 @@ The Kubelet can now use [CNI - the Container Network Interface](https://github.c
 Download and install CNI plugins
 
 ```
-sudo mkdir -p /opt/cni
+CNI_VERSION=v0.5.2
+sudo mkdir -p /opt/cni/bin
 ```
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/network-plugins/cni-amd64-0799f5732f2a11b329d9e3d51b9c8f2e3759f2ff.tar.gz
+wget https://github.com/containernetworking/cni/releases/download/${CNI_VERSION}/cni-amd64-${CNI_VERSION}.tgz
 ```
 
 ```
-sudo tar -xvf cni-amd64-0799f5732f2a11b329d9e3d51b9c8f2e3759f2ff.tar.gz -C /opt/cni
+sudo tar -xvf cni-amd64-${CNI_VERSION}.tgz -C /opt/cni
 ```
 
 Download and install the Kubernetes worker binaries:
 
+Define Kubernetes Version
+
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
+KUBE_VERSION=v1.6.4
+``` 
+
+```
+wget https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl
 ```
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kube-proxy
+wget https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kube-proxy
 ```
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubelet
+wget https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubelet
 ```
 
 ```

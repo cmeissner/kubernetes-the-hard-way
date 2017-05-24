@@ -40,9 +40,8 @@ sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 Download the official etcd release binaries from `coreos/etcd` GitHub project:
 
 ```
-wget https://github.com/coreos/etcd/releases/download/v3.1.4/etcd-v3.1.4-linux-amd64.tar.gz
+wget https://github.com/coreos/etcd/releases/download/v3.1.8/etcd-v3.1.8-linux-amd64.tar.gz
 ```
-
 Extract and install the `etcd` server binary and the `etcdctl` command line client: 
 
 ```
@@ -64,14 +63,14 @@ sudo mkdir -p /var/lib/etcd
 The internal IP address will be used by etcd to serve client requests and communicate with other etcd peers.
 
 ```
-INTERNAL_IP=$(curl -s -H "Metadata-Flavor: Google" \
-  http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
+INTERNAL_IP=$(facter -p ipaddress)
 ```
 
 Each etcd member must have a unique name within an etcd cluster. Set the etcd name:
 
 ```
-ETCD_NAME=controller$(echo $INTERNAL_IP | cut -c 11)
+let CLUSTER_ID=$(echo $HOSTNAME | cut -f 3 -d -)-1
+ETCD_NAME=controller$CLUSTER_ID
 ```
 
 The etcd server will be started and managed by systemd. Create the etcd systemd unit file:
@@ -98,7 +97,7 @@ ExecStart=/usr/bin/etcd \\
   --listen-client-urls https://${INTERNAL_IP}:2379,http://127.0.0.1:2379 \\
   --advertise-client-urls https://${INTERNAL_IP}:2379 \\
   --initial-cluster-token etcd-cluster-0 \\
-  --initial-cluster controller0=https://10.240.0.10:2380,controller1=https://10.240.0.11:2380,controller2=https://10.240.0.12:2380 \\
+  --initial-cluster cluster0=https://10.1.232.5:2380,cluster1=https://10.1.232.6:2380,cluster2=https://10.1.232.7:2380 \\
   --initial-cluster-state new \\
   --data-dir=/var/lib/etcd
 Restart=on-failure

@@ -53,22 +53,28 @@ sudo mv ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem /var/lib/kubernetes/
 
 ### Download and install the Kubernetes controller binaries
 
+First off all create a variable which reflects the version for the kubernetes components.
+
+```
+KUBE_VERSION=v1.6.4
+```
+
 Download the official Kubernetes release binaries:
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kube-apiserver
+wget https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kube-apiserver
 ```
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kube-controller-manager
+wget https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kube-controller-manager
 ```
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kube-scheduler
+wget https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kube-scheduler
 ```
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
+wget https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl
 ```
 
 Install the Kubernetes binaries:
@@ -86,8 +92,7 @@ sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/bin/
 Capture the internal IP address of the machine:
 
 ```
-INTERNAL_IP=$(curl -s -H "Metadata-Flavor: Google" \
-  http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
+INTERNAL_IP=$(facter -p ipaddress)
 ```
 
 Create the systemd unit file:
@@ -115,7 +120,7 @@ ExecStart=/usr/bin/kube-apiserver \\
   --etcd-cafile=/var/lib/kubernetes/ca.pem \\
   --etcd-certfile=/var/lib/kubernetes/kubernetes.pem \\
   --etcd-keyfile=/var/lib/kubernetes/kubernetes-key.pem \\
-  --etcd-servers=https://10.240.0.10:2379,https://10.240.0.11:2379,https://10.240.0.12:2379 \\
+  --etcd-servers=https://10.1.232.5:2379,https://10.1.232.6:2379,https://10.1.232.7:2379 \\
   --event-ttl=1h \\
   --experimental-bootstrap-token-auth \\
   --insecure-bind-address=0.0.0.0 \\

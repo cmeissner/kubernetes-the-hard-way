@@ -22,6 +22,15 @@ chmod +x kubectl
 sudo mv kubectl /usr/local/bin
 ```
 
+Alternatively you can use the pre-packed debian packages from [apt.kubernetes.io](http://apt.kubernetes.io).
+
+```
+echo deb http://apt.kubernetes.io kubernetes-$(lsb_release -sc) main > /etc/apt/sources.list.d/kubernetes.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+apt update
+apt install kubectl
+```
+
 ## Authentication
 
 The following components will leverage Kubernetes RBAC:
@@ -53,8 +62,8 @@ EOF
 Distribute the bootstrap token file to each controller node:
 
 ```
-for host in controller0 controller1 controller2; do
-  gcloud compute copy-files token.csv ${host}:~/
+for host in oobtest-kubemaster-{1..3}-test-01.test.bnotk.net; do
+  scp token.csv root@${host}:~/
 done
 ```
 
@@ -134,7 +143,7 @@ kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 ## Distribute the client kubeconfig files
 
 ```
-for host in worker0 worker1 worker2; do
-  gcloud compute copy-files bootstrap.kubeconfig kube-proxy.kubeconfig ${host}:~/
+for host in oobtest-kubenode-{1..3}-test-01.test.bnotk.net; do
+  scp {bootstrap,kube-proxy}.kubeconfig root@${host}:~/
 done
 ```
