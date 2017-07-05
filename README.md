@@ -1,40 +1,41 @@
 # Kubernetes The Hard Way
 
-This tutorial will walk you through setting up Kubernetes the hard way. This guide is not for people looking for a fully automated command to bring up a Kubernetes cluster. If that's you then check out [Google Container Engine](https://cloud.google.com/container-engine), or the [Getting Started Guides](http://kubernetes.io/docs/getting-started-guides/).
+Dieser Guide zeigt, wie man Kubernetes auf die harte Tour aufsetzt. Wer einen Cluster vollautomatisch aufsetzen möchte, der ist hier falsch. 
 
-This tutorial is optimized for learning, which means taking the long route to help people understand each task required to bootstrap a Kubernetes cluster. This tutorial requires access to [Google Compute Engine](https://cloud.google.com/compute).
+Mit diesem Guide lernt man viel über die Zusammenhänge und über den Weg, den man beschreitet, wenn man einen Kubernetes-Cluster bootsrapen muss oder möchte.
 
-> The results of this tutorial should not be viewed as production ready, and may receive limited support from the community, but don't let that prevent you from learning!
+> Der erstellte Cluster ist nicht für den produktiven Einsatz vorgesehen. 
 
-## Target Audience
+## Zielgruppe
 
-The target audience for this tutorial is someone planning to support a production Kubernetes cluster and wants to understand how everything fits together. After completing this tutorial I encourage you to automate away the manual steps presented in this guide.
+Zur Zielgrupper dieses Guides gehören alle Interessierten, die erfahren wollen, wie die einzelnen Bestandteile in einander greifen. Wenn dieser Guide abgearbeitet wurde, sollte man in der Lage sein eine automatische Installation abzubilden.
 
 ## Cluster Details
 
-* Kubernetes 1.6.0
-* Docker 1.12.6
-* etcd 3.1.4
-* [CNI Based Networking](https://github.com/containernetworking/cni)
+* Kubernetes latest (1.7.0)
+* Docker latest (1.29)
+* etcd latest (3.1.4)
+* [CNI basierte Netzwerkstruktur](https://github.com/containernetworking/cni)
 * Secure communication between all components (etcd, control plane, workers)
 * Default Service Account and Secrets
-* [RBAC authorization enabled](https://kubernetes.io/docs/admin/authorization)
+* [RBAC authorization](https://kubernetes.io/docs/admin/authorization)
 * [TLS client certificate bootstrapping for kubelets](https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping)
+* Overlay-Netzwork (flannel)
 * DNS add-on
+* Kubernetes dashboard
 
-### What's Missing
+### Was fehlt
 
-The resulting cluster will be missing the following features:
+Dem fertigen Cluster fehlen folgende Features:
 
-* Cloud Provider Integration
 * [Logging](https://kubernetes.io/docs/concepts/cluster-administration/logging/)
 * [Cluster add-ons](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons)
 
-## Labs
+## Laboraufbau
 
-This tutorial assumes you have access to [Google Cloud Platform](https://cloud.google.com) and the [Google Cloud SDK](https://cloud.google.com/sdk/)(148.0.0+). While GCP is used for basic infrastructure needs the things learned in this tutorial can be applied to every platform.
+Dieses Tutorial basiert auf virtuelle Maschinen VMWare oder Virtualbox
 
-* [Cloud Infrastructure Provisioning](docs/01-infrastructure-gcp.md)
+* [VM Provisioning](docs/01-infrastructure.md)
 * [Setting up a CA and TLS Cert Generation](docs/02-certificate-authority.md)
 * [Setting up TLS Client Bootstrap and RBAC Authentication](docs/03-auth-configs.md)
 * [Bootstrapping a H/A etcd cluster](docs/04-etcd.md)
